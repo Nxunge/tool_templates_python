@@ -1,0 +1,2 @@
+# tool_templates_python
+一个基于python的快速构建win32执行程序的模板
