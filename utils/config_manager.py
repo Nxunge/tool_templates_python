@@ -6,7 +6,7 @@ CONFIG_FILE = "config.json"
 
 # 默认配置
 DEFAULT_CONFIG = {
-    "配置文件": "格式为json",
+    "port" : 13001
 }
 
 # 全局配置变量

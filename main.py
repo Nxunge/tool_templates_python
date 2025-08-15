@@ -6,6 +6,12 @@ import logging
 import pkgutil
 import importlib
 import plugins
+import threading
+import signal
+import sys
+import time
+import http.server
+
 
 warnings.filterwarnings(
     "ignore",
@@ -26,12 +32,24 @@ def runPlugins():
                 print(f"执行 {full_name}.{target_func_name}()...")
                 func()
 
+def handle_exit(signum, frame):
+    print(f"退出: {signum}, 正在退出")
+    sys.exit(0)
+
 def main():
     setup_logger()
     load_config()
     logging.info("程序启动")
     runPlugins()
-    password = getpass.getpass("运行结束,按任意键退出程序")
+    logging.info("运行成功")
+    # 捕获信号
+    signal.signal(signal.SIGINT, handle_exit)   # Ctrl+C
+    signal.signal(signal.SIGTERM, handle_exit)  # kill
+    try:
+        while True:
+            time.sleep(3600)  # 无限阻塞，但不会占用 CPU
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt 捕获，退出")
 
 if __name__ == "__main__":
     main()
