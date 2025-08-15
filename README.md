@@ -12,3 +12,9 @@ pyinstaller --name program --onefile --hidden-import=win32timezone --hidden-impo
 
 2. 运行文件只需要dist文件夹下的"program.exe"
 3. 所有要执行的业务代码,写到plugins文件夹下,例子参考_example_test.py,会动态加载执行
+
+## 已集成模块
+
+1. 日志模块
+2. 配置模块
+3. 一个简易的http服务
