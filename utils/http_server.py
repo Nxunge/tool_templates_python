@@ -59,7 +59,10 @@ class MyBaseHTTPRequestHandler(BaseHTTPRequestHandler):
 
         try:
             data = json.loads(post_data)
-            logging.info(f"POST {path} url数据:{query_dict} 数据: {data}")
+            if( content_length>1024 ):
+                logging.info(f"POST {path} url数据:{query_dict} 数据长度: {content_length}")
+            else:
+                logging.info(f"POST {path} url数据:{query_dict} 数据: {data}")
         except json.JSONDecodeError:
             self._send_json({"error": "Invalid JSON"}, status=400)
             return
