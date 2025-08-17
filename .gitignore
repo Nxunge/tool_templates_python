@@ -5,3 +5,5 @@ dist/
 *.json
 logs/
 *.spec
+.venv_3_8_10/
+.venv_3_10_11/
