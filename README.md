@@ -7,7 +7,7 @@
 
 ```
 pip install -r requirements.txt
-pyinstaller --name program --onefile --hidden-import=win32timezone --hidden-import=pywintypes --hidden-import=pythoncom main.py --add-data "plugins;plugins" --add-data "utils;utils"
+pyinstaller --name program --onefile --hidden-import=win32timezone --hidden-import=pywintypes --hidden-import=pythoncom main.py --add-data "plugins;plugins" --add-data "utils;utils" --add-data "actions;actions"
 ```
 
 2. 运行文件只需要dist文件夹下的"program.exe"
@@ -18,3 +18,4 @@ pyinstaller --name program --onefile --hidden-import=win32timezone --hidden-impo
 1. 日志模块
 2. 配置模块
 3. 一个简易的http服务
+4. http请求示例

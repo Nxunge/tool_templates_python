@@ -4,11 +4,12 @@ from http.server import BaseHTTPRequestHandler,HTTPServer
 from urllib.parse import urlparse
 from utils.config_manager import config
 import threading
+from urllib.parse import urlparse, parse_qs
 
 
 post_routes = {}
 
-class HTTPServer_JSON_Factory():
+class MyHTTPServer():
     port = config.get("port")
     def __init__(self,_port = None):
         if(_port is not None):
@@ -26,7 +27,7 @@ class HTTPServer_JSON_Factory():
     def startserver(self):
         """启动 HTTP JSON 服务（新线程）"""
         host = "0.0.0.0"
-        server = HTTPServer((host, self.port), HTTPServer_JSON)
+        server = HTTPServer((host, self.port), MyBaseHTTPRequestHandler)
         def run_server():
             logging.info(f"JSON HTTP 服务已启动: http://{host}:{self.port}")
             try:
@@ -40,35 +41,53 @@ class HTTPServer_JSON_Factory():
         thread.start()
         return server, thread
 
-class HTTPServer_JSON(BaseHTTPRequestHandler):
-    def _send_json(self, data, status=200):
-        """统一返回 JSON 响应"""
-        self.send_response(status)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
+class MyBaseHTTPRequestHandler(BaseHTTPRequestHandler): 
+    def _send_json(self, data, status=200): 
+        """统一返回 JSON 响应""" 
+        self.send_response(status) 
+        self.send_header('Content-type', 'application/json') 
+        self.end_headers() 
         self.wfile.write(json.dumps(data).encode('utf-8'))
 
     def do_POST(self):
         parsed_path = urlparse(self.path)
         path = parsed_path.path
+        query_dict = parse_qs(parsed_path.query)
 
         content_length = int(self.headers.get('Content-Length', 0))
         post_data = self.rfile.read(content_length)
 
         try:
             data = json.loads(post_data)
-            logging.info(f"POST {path} 数据: {data}")
+            logging.info(f"POST {path} url数据:{query_dict} 数据: {data}")
         except json.JSONDecodeError:
             self._send_json({"error": "Invalid JSON"}, status=400)
             return
 
         # 查找处理函数
-        handler = post_routes.get(self.server.server_port).get(path)
-        if handler:
+        routes = post_routes.get(self.server.server_port, {})
+        matched_handler = None
+        extra_path = ""
+
+        for route_path, handler in routes.items():
+            if route_path.endswith("/"):
+                if path.startswith(route_path):
+                    matched_handler = handler
+                    extra_path = path[len(route_path):]  # 提取路由后面的内容
+                    break
+            else:
+                if path == route_path:
+                    matched_handler = handler
+                    break
+
+        if matched_handler:
             try:
-                result = handler(self, data)  # 传递 self 和数据
+                result = matched_handler(self, extra_path, query_dict, data)  # 可以传递 extra_path
                 self._send_json(result)
             except Exception as e:
-                self._send_json({"error": str(e)}, status=500)
+                stre = str(e)
+                logging.error(stre)
+                self._send_json({"error":stre}, status=500)
         else:
             self._send_json({"error": "Unknown API path"}, status=404)
+

@@ -6,7 +6,8 @@ CONFIG_FILE = "config.json"
 
 # 默认配置
 DEFAULT_CONFIG = {
-    "port" : 13001
+    "port": 13001,
+    "logdir": os.getcwd()+"\\logs"
 }
 
 # 全局配置变量
@@ -24,4 +25,12 @@ def load_config():
     # 读取配置文件
     with open(CONFIG_FILE, "r", encoding="utf-8") as f:
         config = json.load(f)
+
+      # 补充缺失的默认 key
+    for key, value in DEFAULT_CONFIG.items():
+        if key not in config:
+            config[key] = value
+            print(f"已添加缺失配置: {key} = {value}")
     print("配置已加载:", config)
+#被引用的时候自动加载配置
+load_config()

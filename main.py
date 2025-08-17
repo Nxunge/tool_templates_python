@@ -9,6 +9,7 @@ import plugins
 import threading
 import signal
 import sys
+import requests
 import time
 import http.server
 
@@ -28,9 +29,11 @@ def runPlugins():
 
         if hasattr(module, target_func_name):
             func = getattr(module, target_func_name)
-            if callable(func):
+            if callable(func) and not getattr(func, "skip", False):
                 print(f"执行 {full_name}.{target_func_name}()...")
                 func()
+            else:
+                print(f"跳过 {full_name}.{target_func_name}()")
 
 def handle_exit(signum, frame):
     print(f"退出: {signum}, 正在退出")
@@ -38,7 +41,6 @@ def handle_exit(signum, frame):
 
 def main():
     setup_logger()
-    load_config()
     logging.info("程序启动")
     runPlugins()
     logging.info("运行成功")

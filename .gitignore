@@ -2,5 +2,6 @@
 __pycache__/
 build/
 dist/
+*.json
 logs/
 *.spec

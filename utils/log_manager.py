@@ -3,10 +3,12 @@ import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
+from utils.config_manager import config
 
-LOG_DIR = "logs"
+
 
 def setup_logger():
+    LOG_DIR = config.get("logdir")
     if not os.path.exists(LOG_DIR):
         os.makedirs(LOG_DIR)
 
