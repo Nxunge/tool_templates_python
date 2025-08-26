@@ -13,6 +13,11 @@ DEFAULT_CONFIG = {
 # 全局配置变量
 config = None
 
+def set_config(key, value):
+    global config
+    if(config is None):
+        load_config()
+    config[key] = value
 
 def load_config():
     global config

@@ -19,3 +19,5 @@ pyinstaller --name program --onefile --hidden-import=win32timezone --hidden-impo
 2. 配置模块
 3. 一个简易的http服务
 4. http请求示例
+5. 新增了--test命令,在tests文件夹下编写的程序脚本会在携带此命令时执行
+6. 新增action_00_init_ramdisk.py,可以申请一个内存盘符并在关闭时自动释放,windows需要安装Imdisk
